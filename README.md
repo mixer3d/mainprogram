@@ -1,0 +1,1 @@
+Simple program to copy files from source list.
