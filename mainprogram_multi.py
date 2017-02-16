@@ -17,7 +17,7 @@ def input_parser():
                         help='input file with list')
     parser.add_argument('-o', dest='dst_dir', required=True,
                         help='destination path')
-    parser.add_argument('-n', dest="number_of_processes", default=1, type=int, help="number of processes >= 24")
+    parser.add_argument('-n', dest="number_of_processes", default=1, type=int, help="number of processes <= 24")
 
     return parser.parse_args()
 
