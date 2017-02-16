@@ -6,6 +6,8 @@ From list in local text file download images, and save on local drive.
 import argparse
 import os
 import sys
+import urllib
+import colorama
 from urllib.request import urlopen
 from multiprocessing import Pool
 
@@ -17,22 +19,25 @@ def input_parser():
                         help='input file with list')
     parser.add_argument('-o', dest='dst_dir', required=True,
                         help='destination path')
-    parser.add_argument('-n', dest="number_of_processes", default=1, type=int, help="number of processes <= 24")
+    parser.add_argument('-n', dest="number_of_processes", default=1, type=int,
+                        help="number of processes <=24")
 
     return parser.parse_args()
 
 
 def folder_creator(dst_dir):
-    """Create of output directory if not exists
-    """
+    """Create of output directory if not exists"""
     if not os.path.exists(dst_dir):
         os.makedirs(dst_dir)
         print('Destination folder not exists and will be created')
 
 
 def download_image(url, dst_dir):
-    reply = urlopen(url)
-    print(reply.getcode())
+    try:
+        reply = urlopen(url)
+    except urllib.error.HTTPError:
+        print(colorama.Fore.RED + "[!] 404 NOT FOUND: {}".format(url) + colorama.Fore.RESET)
+        return None
     file_name = url_converter(url)
     src_file = os.path.join(dst_dir, file_name)
     print("Downloading file from {} ...".format(url))
@@ -57,22 +62,6 @@ def image_downloader(url):
     except ValueError:
         print("Done, end of source list file  : {}".format(input_file))
         sys.exit(2)
-
-
-# def image_downloader(input_file, dst_dir):
-#     """
-#     Reader
-#     for the source file list with writer for selected out put folder.
-#     """
-# try:
-#     with open(input_file) as f:
-#         [download_image(url.strip(), dst_dir) for url in f]
-# except IOError:
-#     print("Invalid input file name : {}".format(input_file))
-#     sys.exit(2)
-# except ValueError:
-#     print("Done, end of source list file  : {}".format(input_file))
-#     sys.exit(2)
 
 
 if __name__ == "__main__":
